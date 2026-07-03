@@ -23,6 +23,7 @@ jobs:
       PORT: 5000
       NODE_ENV: test
       CLIENT_URL: http://localhost:5173
+      NODE_OPTIONS: --experimental-vm-modules
 
     steps:
       - uses: actions/checkout@v4
@@ -45,8 +46,9 @@ jobs:
 
       - name: Run unit tests
         run: npm test
-        env:
-          NODE_OPTIONS: --experimental-vm-modules
+
+      - name: Run integration tests
+        run: npm run test:integration
 
   frontend:
     name: Frontend Build

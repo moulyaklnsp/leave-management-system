@@ -1,6 +1,7 @@
 import leaveRepository from "../repositories/leave.repository.js";
 import employeeRepository from "../repositories/employee.repository.js";
 import auditRepository from "../repositories/audit.repository.js";
+import { sendLeaveAppliedEmail, sendLeaveApprovedEmail, sendLeaveRejectedEmail } from "./email.service.js";
 import ApiError from "../utils/ApiError.js";
 import prisma from "../config/prisma.js";
 
@@ -75,6 +76,9 @@ class LeaveService {
       description: `Applied ${leaveType} leave for ${totalDays} day(s)`,
       ipAddress,
     });
+
+    const emp = await employeeRepository.findById(employeeId);
+    sendLeaveAppliedEmail(emp, leave).catch(() => {});
 
     return leave;
   }
@@ -181,6 +185,9 @@ class LeaveService {
       ipAddress,
     });
 
+    const emp = await employeeRepository.findById(leave.employeeId);
+    sendLeaveApprovedEmail(emp, updated).catch(() => {});
+
     return updated;
   }
 
@@ -203,6 +210,9 @@ class LeaveService {
       description: `Rejected leave for employee #${leave.employeeId}`,
       ipAddress,
     });
+
+    const emp = await employeeRepository.findById(leave.employeeId);
+    sendLeaveRejectedEmail(emp, updated, managerComments).catch(() => {});
 
     return updated;
   }
