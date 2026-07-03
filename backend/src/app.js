@@ -8,6 +8,7 @@ import apiLimiter from "./middleware/rateLimiter.js";
 import requestLogger from "./middleware/requestLogger.js";
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorHandler.js";
+import routes from "./routes/index.js";
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api", routes);
 app.use(notFound);
 
 app.use(errorHandler);
