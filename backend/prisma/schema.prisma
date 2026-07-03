@@ -29,169 +29,186 @@ enum LeaveStatus {
 }
 
 model Employee {
-  id              Int              @id @default(autoincrement())
-  employeeCode    String           @unique
-  firstName       String
-  lastName        String
-  email           String           @unique
-  password        String
+  id Int @id @default(autoincrement())
 
-  departmentId    Int
-  department      Department       @relation(fields: [departmentId], references: [id])
+  employeeCode String @unique
 
-  role            UserRole         @default(EMPLOYEE)
+  firstName String
+  lastName  String
 
-  isActive        Boolean          @default(true)
+  email    String @unique
+  password String
 
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
 
-  leaves          Leave[]
-  refreshTokens   RefreshToken[]
-  auditLogs       AuditLog[]
-  notifications   Notification[]
-  leaveBalance    LeaveBalance?
+  role UserRole @default(EMPLOYEE)
+
+  isActive  Boolean @default(true)
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  leaves         Leave[]
+  approvedLeaves Leave[] @relation("ApprovedLeaves")
+
+  leaveBalance LeaveBalance?
+
+  refreshTokens RefreshToken[]
+
+  notifications Notification[]
+
+  auditLogs AuditLog[]
+
+  passwordResetTokens PasswordResetToken[]
 
   @@index([email])
 }
 
 model Department {
+  id Int @id @default(autoincrement())
 
-  id          Int          @id @default(autoincrement())
+  name String @unique
 
-  name        String       @unique
+  employees Employee[]
 
-  employees   Employee[]
-
-  createdAt   DateTime     @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Leave {
+  id Int @id @default(autoincrement())
 
-  id                  Int          @id @default(autoincrement())
+  employeeId Int
+  employee   Employee @relation(fields: [employeeId], references: [id])
 
-  employeeId          Int
+  approvedById Int?
+  approvedBy   Employee? @relation("ApprovedLeaves", fields: [approvedById], references: [id])
 
-  employee            Employee     @relation(fields: [employeeId], references: [id])
+  leaveType LeaveType
 
-  leaveType           LeaveType
+  startDate DateTime
+  endDate   DateTime
 
-  startDate           DateTime
+  totalDays Int
 
-  endDate             DateTime
+  reason String
 
-  totalDays           Int
+  status LeaveStatus @default(PENDING)
 
-  reason              String
+  managerComments String?
 
-  status              LeaveStatus  @default(PENDING)
+  approvedAt DateTime?
 
-  managerComments     String?
+  appliedAt DateTime @default(now())
 
-  appliedAt           DateTime     @default(now())
-
-  updatedAt           DateTime     @updatedAt
+  updatedAt DateTime @updatedAt
 
   @@index([employeeId])
-
+  @@index([approvedById])
   @@index([status])
-
 }
 
 model LeaveBalance {
+  id Int @id @default(autoincrement())
 
-  id              Int          @id @default(autoincrement())
+  employeeId Int @unique
 
-  employeeId      Int          @unique
+  employee Employee @relation(fields: [employeeId], references: [id])
 
-  employee        Employee     @relation(fields: [employeeId], references: [id])
+  casual Int @default(10)
 
-  casual          Int          @default(10)
+  sick Int @default(10)
 
-  sick            Int          @default(10)
+  earned Int @default(15)
 
-  earned          Int          @default(15)
+  maternity Int @default(180)
 
-  maternity       Int          @default(180)
+  paternity Int @default(15)
 
-  paternity       Int          @default(15)
+  unpaid Int @default(999)
 
-  unpaid          Int          @default(999)
-
-  updatedAt       DateTime     @updatedAt
-
+  updatedAt DateTime @updatedAt
 }
 
 model RefreshToken {
+  id Int @id @default(autoincrement())
 
-  id              Int          @id @default(autoincrement())
+  token String @unique
 
-  token           String       @unique
+  employeeId Int
 
-  employeeId      Int
+  employee Employee @relation(fields: [employeeId], references: [id])
 
-  employee        Employee     @relation(fields: [employeeId], references: [id])
+  expiresAt DateTime
 
-  expiresAt       DateTime
-
-  createdAt       DateTime     @default(now())
+  createdAt DateTime @default(now())
 
   @@index([employeeId])
-
 }
 
 model Notification {
+  id Int @id @default(autoincrement())
 
-  id              Int          @id @default(autoincrement())
+  employeeId Int
 
-  employeeId      Int
+  employee Employee @relation(fields: [employeeId], references: [id])
 
-  employee        Employee     @relation(fields: [employeeId], references: [id])
+  title String
 
-  title           String
+  message String
 
-  message         String
+  isRead Boolean @default(false)
 
-  isRead          Boolean      @default(false)
-
-  createdAt       DateTime     @default(now())
-
+  createdAt DateTime @default(now())
 }
 
 model AuditLog {
+  id Int @id @default(autoincrement())
 
-  id              Int          @id @default(autoincrement())
+  employeeId Int
 
-  employeeId      Int
+  employee Employee @relation(fields: [employeeId], references: [id])
 
-  employee        Employee     @relation(fields: [employeeId], references: [id])
+  action String
 
-  action          String
+  entity String
 
-  entity          String
+  entityId Int
 
-  entityId        Int
+  description String?
 
-  description     String?
+  ipAddress String?
 
-  ipAddress       String?
-
-  createdAt       DateTime     @default(now())
+  createdAt DateTime @default(now())
 
   @@index([employeeId])
-
 }
 
 model EmailLog {
+  id Int @id @default(autoincrement())
 
-  id              Int          @id @default(autoincrement())
+  recipient String
 
-  recipient       String
+  subject String
 
-  subject         String
-  
-  status          String
+  status String
 
-  sentAt          DateTime     @default(now())
+  sentAt DateTime @default(now())
+}
 
+model PasswordResetToken {
+  id Int @id @default(autoincrement())
+
+  token String @unique
+
+  employeeId Int
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([employeeId])
 }
