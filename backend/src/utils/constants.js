@@ -9,7 +9,6 @@ export const LEAVE_STATUS = {
   REJECTED: "REJECTED",
   CANCELLED: "CANCELLED",
 };
-
 export const LEAVE_TYPES = {
   CASUAL: "CASUAL",
   SICK: "SICK",

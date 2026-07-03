@@ -5,7 +5,6 @@ export const loginValidation = [
     .trim()
     .isEmail()
     .withMessage("Valid email is required"),
-
   body("password")
     .trim()
     .notEmpty()

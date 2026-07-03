@@ -39,7 +39,6 @@ export const generateRefreshToken = (employee) => {
 export const verifyAccessToken = (token) => {
   return jwt.verify(token, env.JWT_ACCESS_SECRET);
 };
-
 /**
  * Verify Refresh Token
  */

@@ -12,7 +12,6 @@ class EmployeeRepository {
       },
     });
   }
-
   async findByEmail(email) {
     return prisma.employee.findUnique({
       where: {

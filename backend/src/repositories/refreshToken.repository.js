@@ -38,5 +38,4 @@ class RefreshTokenRepository {
     });
   }
 }
-
 export default new RefreshTokenRepository();
