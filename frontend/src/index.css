@@ -185,6 +185,9 @@ tbody tr:last-child td { border-bottom: none; }
 .page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 .page-btn:disabled { opacity: .5; cursor: not-allowed; }
 
+/* Role selector */
+.role-option:has(input:checked) { border-color: var(--primary) !important; background: var(--primary-light) !important; }
+
 /* Login page */
 .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px; }
 .login-card { background: var(--surface); border-radius: 16px; padding: 40px; width: 100%; max-width: 420px; box-shadow: var(--shadow-lg); }
