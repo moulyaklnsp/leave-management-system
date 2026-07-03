@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leave Management System — API Documentation</title>
+    <meta name="description" content="REST API documentation for the Employee Leave Management System" />
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui.css" />
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: sans-serif; background: #fafafa; }
+      .topbar { background: #4f46e5; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+      .topbar h1 { color: #fff; font-size: 18px; font-weight: 700; margin: 0; }
+      .topbar p { color: #c7d2fe; font-size: 13px; margin: 0; }
+      .badge { background: #818cf8; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; }
+      #swagger-ui { max-width: 1200px; margin: 0 auto; padding: 24px; }
+      .swagger-ui .topbar { display: none; }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="white" fill-opacity="0.2"/>
+        <path d="M8 10h16M8 16h10M8 22h12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>Leave Management System <span class="badge">v1.0.0</span></h1>
+        <p>REST API Documentation &nbsp;|&nbsp; Live: <a href="http://localhost:5000/api-docs" style="color:#c7d2fe">http://localhost:5000/api-docs</a></p>
+      </div>
+    </div>
+
+    <div id="swagger-ui"></div>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-standalone-preset.js"></script>
+    <script>
+      window.onload = () => {
+        SwaggerUIBundle({
+          url: "./openapi.json",
+          dom_id: "#swagger-ui",
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+          layout: "StandaloneLayout",
+          persistAuthorization: true,
+          displayRequestDuration: true,
+          filter: true,
+          tryItOutEnabled: true,
+        });
+      };
+    </script>
+  </body>
+</html>
