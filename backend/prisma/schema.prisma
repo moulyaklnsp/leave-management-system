@@ -6,3 +6,192 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+enum UserRole {
+  EMPLOYEE
+  MANAGER
+}
+
+enum LeaveType {
+  CASUAL
+  SICK
+  EARNED
+  MATERNITY
+  PATERNITY
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model Employee {
+  id              Int              @id @default(autoincrement())
+  employeeCode    String           @unique
+  firstName       String
+  lastName        String
+  email           String           @unique
+  password        String
+
+  departmentId    Int
+  department      Department       @relation(fields: [departmentId], references: [id])
+
+  role            UserRole         @default(EMPLOYEE)
+
+  isActive        Boolean          @default(true)
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  leaves          Leave[]
+  refreshTokens   RefreshToken[]
+  auditLogs       AuditLog[]
+  notifications   Notification[]
+  leaveBalance    LeaveBalance?
+
+  @@index([email])
+}
+
+model Department {
+
+  id          Int          @id @default(autoincrement())
+
+  name        String       @unique
+
+  employees   Employee[]
+
+  createdAt   DateTime     @default(now())
+}
+
+model Leave {
+
+  id                  Int          @id @default(autoincrement())
+
+  employeeId          Int
+
+  employee            Employee     @relation(fields: [employeeId], references: [id])
+
+  leaveType           LeaveType
+
+  startDate           DateTime
+
+  endDate             DateTime
+
+  totalDays           Int
+
+  reason              String
+
+  status              LeaveStatus  @default(PENDING)
+
+  managerComments     String?
+
+  appliedAt           DateTime     @default(now())
+
+  updatedAt           DateTime     @updatedAt
+
+  @@index([employeeId])
+
+  @@index([status])
+
+}
+
+model LeaveBalance {
+
+  id              Int          @id @default(autoincrement())
+
+  employeeId      Int          @unique
+
+  employee        Employee     @relation(fields: [employeeId], references: [id])
+
+  casual          Int          @default(10)
+
+  sick            Int          @default(10)
+
+  earned          Int          @default(15)
+
+  maternity       Int          @default(180)
+
+  paternity       Int          @default(15)
+
+  unpaid          Int          @default(999)
+
+  updatedAt       DateTime     @updatedAt
+
+}
+
+model RefreshToken {
+
+  id              Int          @id @default(autoincrement())
+
+  token           String       @unique
+
+  employeeId      Int
+
+  employee        Employee     @relation(fields: [employeeId], references: [id])
+
+  expiresAt       DateTime
+
+  createdAt       DateTime     @default(now())
+
+  @@index([employeeId])
+
+}
+
+model Notification {
+
+  id              Int          @id @default(autoincrement())
+
+  employeeId      Int
+
+  employee        Employee     @relation(fields: [employeeId], references: [id])
+
+  title           String
+
+  message         String
+
+  isRead          Boolean      @default(false)
+
+  createdAt       DateTime     @default(now())
+
+}
+
+model AuditLog {
+
+  id              Int          @id @default(autoincrement())
+
+  employeeId      Int
+
+  employee        Employee     @relation(fields: [employeeId], references: [id])
+
+  action          String
+
+  entity          String
+
+  entityId        Int
+
+  description     String?
+
+  ipAddress       String?
+
+  createdAt       DateTime     @default(now())
+
+  @@index([employeeId])
+
+}
+
+model EmailLog {
+
+  id              Int          @id @default(autoincrement())
+
+  recipient       String
+
+  subject         String
+  
+  status          String
+
+  sentAt          DateTime     @default(now())
+
+}
