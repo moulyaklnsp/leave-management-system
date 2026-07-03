@@ -13,22 +13,27 @@ class RefreshTokenRepository {
 
   async findByToken(token) {
     return prisma.refreshToken.findUnique({
-      where: {
-        token,
-      },
-      include: {
-        employee: true,
-      },
+        where: {
+            token,
+        },
+        include: {
+            employee: {
+                include: {
+                    department: true,
+                    leaveBalance: true,
+                },
+            },
+        },
     });
-  }
+}
 
   async deleteByToken(token) {
-    return prisma.refreshToken.delete({
-      where: {
-        token,
-      },
+    return prisma.refreshToken.deleteMany({
+        where: {
+            token,
+        },
     });
-  }
+}
 
   async deleteAllForEmployee(employeeId) {
     return prisma.refreshToken.deleteMany({
