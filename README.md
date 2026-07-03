@@ -2,61 +2,75 @@
 
 ## Project Overview
 
-A full-stack **Employee Leave Management System** built to replace manual email/spreadsheet-based leave tracking. Employees can apply for leave and track their history, while managers can review, approve, or reject requests — all from a centralized, role-based web application.
+The Employee Leave Management System is a full-stack web application developed to digitize and simplify the leave management process within an organization.
 
-Built with React, Node.js/Express, Prisma ORM, and SQLite as an MVP demonstrating clean architecture, JWT authentication, REST API design, and modern frontend practices.
+The system replaces manual leave tracking through emails and spreadsheets by providing a centralized platform where employees can submit leave requests, monitor their leave history, and track approval status. Managers can efficiently review, approve, or reject leave requests while maintaining complete visibility into employee leave records.
+
+The application follows a layered architecture with secure JWT authentication, role-based authorization, RESTful APIs, responsive frontend design, and a normalized relational database using Prisma ORM.
 
 ---
 
 ## Features
 
-### Employee
-- Secure JWT login/logout with refresh token rotation
-- Dashboard with leave stats and remaining balance
-- Apply for leave (Casual, Sick, Earned, Maternity, Paternity, Unpaid)
-- View, search, and filter leave history by type and status
-- Edit or cancel pending leave requests
+### Authentication
+- Secure Login & Logout
+- JWT Access Token Authentication
+- JWT Refresh Token Rotation
+- Role-Based Access Control (Employee & Manager)
+- Protected Routes
+- Password Encryption using bcrypt
+- Input Validation
+- API Rate Limiting
 
-### Manager
-- Dashboard with team-wide leave statistics
-- View and search all employees
-- Review pending leave requests with full details
-- Approve or reject requests with mandatory comments
-- Filter all leave records by type/status
+### Employee Features
+- Employee Dashboard
+- Apply Leave
+- Edit Pending Leave
+- Cancel Pending Leave
+- View Leave History
+- Search Leave History
+- Filter Leave Records
+- View Leave Balance
+- Dark Mode
 
-### System
-- JWT Authentication with Refresh Token rotation (one-time use)
-- Role-Based Access Control (EMPLOYEE / MANAGER)
-- Leave balance tracking with auto-deduction on approval
-- Working day calculation (Mon–Fri, weekends excluded)
-- Overlap detection to prevent duplicate leave requests
-- Email notifications on apply, approve, and reject
-- Audit logs for every action with IP tracking
-- Swagger/OpenAPI documentation
-- Dark mode toggle (persisted to localStorage)
-- Fully responsive design (mobile-friendly)
-- API rate limiting (100 req/15 min)
-- Helmet security headers, Winston logging
-- Docker support, GitHub Actions CI/CD
-- Unit & Integration tests
+### Manager Features
+- Manager Dashboard
+- View All Employees
+- Search Employees
+- View Pending Leave Requests
+- Approve Leave Requests
+- Reject Leave Requests with Comments
+- View Employee Leave History
+- Filter Leave Requests
 
----
+### System Features
+- Leave Balance Calculation
+- Working Day Calculation
+- Overlapping Leave Detection
+- Email Notifications
+- Audit Logs
+- Swagger API Documentation
+- Responsive Design
+- Docker Support
+- GitHub Actions CI/CD
+- Unit Testing
+- Integration Testing
 
 ## Technology Stack
 
-| Layer      | Technology                                                        |
-|------------|-------------------------------------------------------------------|
-| Frontend   | React 19, React Router v7, React Hook Form, Axios, React Toastify |
-| Backend    | Node.js, Express 5, Prisma ORM                                    |
-| Database   | SQLite (via Prisma)                                               |
-| Auth       | JWT (Access + Refresh tokens), bcryptjs                           |
-| Email      | Nodemailer                                                        |
-| Docs       | Swagger UI / OpenAPI 3.0                                          |
-| DevOps     | Docker, Docker Compose, GitHub Actions                            |
-| Testing    | Jest, Supertest                                                   |
-| Logging    | Winston                                                           |
-
----
+| Layer | Technology |
+|--------|------------|
+| Frontend | React, Vite, React Router, Axios, React Hook Form |
+| Backend | Node.js, Express.js |
+| Database | SQLite + Prisma ORM |
+| Authentication | JWT, Refresh Tokens, bcrypt |
+| Validation | express-validator |
+| Documentation | Swagger (OpenAPI) |
+| Email | Nodemailer |
+| Logging | Winston |
+| Security | Helmet, CORS, Rate Limiting |
+| Testing | Jest, Supertest |
+| DevOps | Docker, Docker Compose, GitHub Actions |
 
 ## Folder Structure
 
@@ -93,6 +107,9 @@ leave-management-system/
 ├── docs/
 │   ├── index.html                 # Standalone Swagger UI (open in browser)
 │   └── openapi.json               # Static OpenAPI 3.0 spec
+postman/
+│   ├── LMS.postman_collection.json    # Postman collection containing all API endpoints
+│   └── LMS.postman_environment.json   # Postman environment variables (base URL, tokens, etc.)
 ├── .github/
 │   └── workflows/ci.yml           # GitHub Actions CI/CD pipeline
 ├── docker-compose.yml
@@ -162,6 +179,14 @@ cd frontend && npm install
 ---
 
 ## Database Setup
+The project uses Prisma ORM with SQLite.
+
+Database setup includes:
+
+- Prisma schema
+- Database migrations
+- Seed data
+- Prisma Studio for database visualization
 
 ```bash
 cd backend
@@ -249,7 +274,7 @@ Then open **http://localhost:5173** in your browser.
 
 ```bash
 # From the root directory
-cp .env.example .env        # fill in JWT_ACCESS_SECRET and JWT_REFRESH_SECRET
+cp .env.example .env       
 docker-compose up --build
 ```
 
@@ -359,6 +384,10 @@ node scripts/export-swagger.js   # updates docs/openapi.json
 - Managers cannot apply for leave (role-based restriction enforced on both frontend and backend)
 - Refresh tokens are single-use and rotated on every refresh call
 - Email notifications are sent asynchronously and do not block the API response; if SMTP is not configured, emails are silently skipped and logged
+- Authentication is performed using JWT Access and Refresh Tokens.
+- Managers are responsible for reviewing employee leave requests.
+- Employees can modify only pending leave requests.
+- Leave balances are updated only after approval.
 
 ---
 
@@ -368,6 +397,9 @@ node scripts/export-swagger.js   # updates docs/openapi.json
 - Single global manager role — no department-level manager scoping
 - No leave carry-forward or encashment logic
 - SQLite does not support concurrent writes well — use PostgreSQL for production
+- SQLite is suitable for development but not recommended for high-concurrency production environments.
+- Email notifications require valid SMTP configuration.
+- The application currently supports two user roles (Employee and Manager).
 
 ---
 
@@ -381,3 +413,4 @@ node scripts/export-swagger.js   # updates docs/openapi.json
 - Mobile app (React Native)
 - Leave approval workflow with multi-level approvals
 - HR admin role for managing employees and departments
+- Implement and fully configure email service (SMTP integration) — add comprehensive email templates, retries, and delivery logging
